@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Submit Task</title>
+    <link rel='stylesheet' href='/stylesheets/submitter_style.css' />
+    <link rel='stylesheet' href='/stylesheets/submitter_connected_style.css' />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/0.3.16/peer.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  </head>
+  <body>
+    <h1>Task Status</h1>
+    <hr>
+    <form action="/action_page.php">
+      <label for="peer_id">Your Peer Id</label>
+      <input type="text" id="peer_id" name="peer_id" value="sample-id" readonly>
+
+      <label for="task_title">Task Title</label>
+      <input type="text" id="task_title" value="<%= task_title %>" name="task_title" readonly>
+    </form>
+    <div>
+      <label for="connected_peers_list">Connected Peers</label>
+        <ul id="connected_peers_list">
+            <li><a href="#">id-1</a></li>
+            <li><a href="#">id-2</a></li>
+            <li><a href="#">id-3</a></li>
+            <li><a href="#">id-4</a></li>
+        </ul>
+    </div>
+    <script>
+      function guid() {
+        function s4() {
+          return Math.floor((1 + Math.random()) * 0x10000)
+            .toString(16)
+            .substring(1);
+        }
+        return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+      }
+
+      function createPeer() {
+        var peer = new Peer(guid(), {host: 'localhost', port: 3000, path: '/peerserver'});
+        var peerIdText = document.getElementById("peer_id");
+        peer.on('open', function () {
+          peerIdText.value = peer.id;
+          $.post('/update_submitters_list', {id: peer.id, task_title: '<%= task_title %>'}, function(data) {
+          });
+        });
+        peer.on('connection', function(conn) {
+          conn.on('open', function() {
+            conn.on('data', function(data) {
+              console.log('Received', data);
+            });
+          });
+        });
+      }
+
+      window.onload = createPeer;
+    </script>
+  </body>
+</html>

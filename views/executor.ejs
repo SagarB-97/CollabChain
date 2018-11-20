@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Executable Tasks</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <h1>Executable tasks</h1>
+		<div id="choice">
+			<ul id="ulchoice">
+        <% for(var i = 0; i < peerList.length; i++) { %>
+          <a href="/executor/<%= peerList[i].id %>"><li id="lichoice"><%= peerList[i].task_title %></li></a>
+        <% } %>
+			</ul>
+		</div>
+  </body>
+</html>

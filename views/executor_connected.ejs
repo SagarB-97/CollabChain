@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Submit Task</title>
+    <link rel='stylesheet' href='/stylesheets/submitter_style.css' />
+    <link rel='stylesheet' href='/stylesheets/submitter_connected_style.css' />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/0.3.16/peer.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  </head>
+  <body>
+    <h1>Executing Task details</h1>
+    <hr>
+    <form>
+      <label for="peer_id">Your Peer Id</label>
+      <input type="text" id="peer_id" name="peer_id" value="sample-id" readonly>
+
+      <label for="sub_peer_id">Submitter Peer Id</label>
+      <input type="text" id="sub_peer_id" name="sub_peer_id" value="<%= id %>" readonly>
+
+      <label for="task_title">Task Title</label>
+      <input type="text" id="task_title" value="<%= task_title %>" name="task_title" readonly>
+    </form>
+    <script>
+      function guid() {
+        function s4() {
+          return Math.floor((1 + Math.random()) * 0x10000)
+            .toString(16)
+            .substring(1);
+        }
+        return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+      }
+
+      function createPeer() {
+        var peer = new Peer(guid(), {host: 'localhost', port: 3000, path: '/peerserver'});
+        var peerIdText = document.getElementById("peer_id");
+        peer.on('open', function () {
+            peerIdText.value = peer.id;
+        });
+
+        var conn = peer.connect('<%= id %>');
+        conn.on('open', function() {
+          conn.send('Hello. I will execute : ' + peer.id);
+        });
+        peer.on('error', function (err) {
+          alert('' + err)
+        });
+      }
+
+      window.onload = createPeer;
+    </script>
+  </body>
+</html>
