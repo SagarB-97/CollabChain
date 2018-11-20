@@ -1,8 +1,90 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+body{
+  font-family: tahoma;
+  color: #FFFFFF;
+  background: #0d1521;
 }
 
-a {
-  color: #00B7FF;
+#choice{
+  position: relative;
+  transform: translateY(30%);
+  width: 95%;
+  background: #090d13;
+  margin: 0 auto;
+  padding: 20px;
+  box-sizing: border-box;
 }
+
+button{
+  padding: 20px;
+  width: 30%;
+  float: left;
+  background: #23282e;
+  border: 0;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+#ulchoice{
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+a{
+  text-decoration: none;
+  color: #FFF;
+}
+a:hover{
+  text-decoration: none;
+  color: #FFF;
+}
+
+#lichoice{
+  border-style: solid;
+  border-width: 1px;
+  border-color: #0d1521;
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  font-family: arial;
+  font-size: 20px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+#lichoice:hover{
+  text-align: center;
+  background: rgb(0,0,0);
+}
+h1{
+  position: relative;
+  margin: 0 auto;
+  width: 95%;
+  padding: 20px;
+  color: rgb(255, 255, 255);
+  text-align: center;
+  background: #090d13;
+  font-style: oblique;
+}
+
+#wikichoice{
+  border-style: solid;
+  border-width: 1px;
+  border-color: #0d1521;
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  font-family: arial;
+  font-size: 20px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  text-align: center;
+  background: #130909;
+}
+#wikichoice:hover{
+  text-align: center;
+  background: rgb(0,0,0);
+}
+
