@@ -1,20 +1,29 @@
 var express = require('express');
 var router = express.Router();
-var peerList = require('../peerList');
+var fs = require('fs');
+
+const peerListFilePath = './peerserver/peerList.json';
+
+function createNewFileIfAbsent() {
+  let obj = {};
+  try {
+    fs.writeFileSync(peerListFilePath, JSON.stringify(obj), {flag: 'wx'});
+  }
+  catch(err) {
+  }
+}
 
 router.get('/', function(req, res, next) {
-  res.render('executor', {peerList: peerList});
+  createNewFileIfAbsent();
+  let obj = JSON.parse(fs.readFileSync(peerListFilePath));
+  res.render('executor', {peerList: Object.values(obj)});
 });
 
 router.get('/:peerid', function(req, res, next) {
-  var idx = -1;
-  for(var i = 0; i < peerList.length; i++) {
-    if(peerList[i].id == req.params.peerid) {
-      idx = i;
-      break;
-    }
-  }
-  res.render('executor_connected', {id: peerList[idx].id, task_title: peerList[idx].task_title});
+  createNewFileIfAbsent();
+  let obj = JSON.parse(fs.readFileSync(peerListFilePath));
+  let id = req.params.peerid;
+  res.render('executor_connected', {id: obj[id].id, task_title: obj[id].task_title});
 });
 
 module.exports = router;

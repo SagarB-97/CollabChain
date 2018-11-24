@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Submit Task</title>
+    <title>Execting task</title>
     <link rel='stylesheet' href='/stylesheets/submitter_style.css' />
     <link rel='stylesheet' href='/stylesheets/submitter_connected_style.css' />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/0.3.16/peer.min.js"></script>
@@ -31,10 +31,10 @@
       }
 
       function createPeer() {
-        var peer = new Peer(guid(), {host: 'localhost', port: 3000, path: '/peerserver'});
+        var peer = new Peer(guid(), {host: 'localhost', port: 9000, path: '/'});
         var peerIdText = document.getElementById("peer_id");
         peer.on('open', function () {
-            peerIdText.value = peer.id;
+          peerIdText.value = peer.id;
         });
 
         var conn = peer.connect('<%= id %>');

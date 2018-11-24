@@ -7,8 +7,6 @@
 var app = require('../app');
 var debug = require('debug')('colabit:server');
 var http = require('http');
-var ExpressPeerServer = require('peer').ExpressPeerServer;
-var peerList = require('../peerList');
 
 /**
  * Get port from environment and store in Express.
@@ -22,21 +20,6 @@ app.set('port', port);
  */
 
 var server = http.createServer(app);
-
-/**
- * Create Peer Server
- */
-var peerserver = ExpressPeerServer(server, {debug: true});
-app.use('/peerserver', peerserver);
-peerserver.on('connection', function(id) {
-  console.log("New Peer Id = " + id + "\n");
-});
-peerserver.on('disconnect', function(id) {
-  for(var i = 0; i < peerList.length; i++) {
-    if(peerList[i].id == id)
-      peerList.splice(i, 1);
-  }
-});
 
 /**
  * Listen on provided port, on all network interfaces.

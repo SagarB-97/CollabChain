@@ -37,7 +37,7 @@
       }
 
       function createPeer() {
-        var peer = new Peer(guid(), {host: 'localhost', port: 3000, path: '/peerserver'});
+        var peer = new Peer(guid(), {host: 'localhost', port: 9000, path: '/'});
         var peerIdText = document.getElementById("peer_id");
         peer.on('open', function () {
           peerIdText.value = peer.id;
@@ -45,9 +45,10 @@
           });
         });
         peer.on('connection', function(conn) {
+          alert('Connection is open');
           conn.on('open', function() {
             conn.on('data', function(data) {
-              console.log('Received', data);
+              alert('Received' + data);
             });
           });
         });

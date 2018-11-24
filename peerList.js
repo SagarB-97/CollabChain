@@ -1,3 +1,0 @@
-peerList = [];
-
-module.exports = peerList;
