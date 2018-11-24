@@ -20,10 +20,6 @@
     <div>
       <label for="connected_peers_list">Connected Peers</label>
         <ul id="connected_peers_list">
-            <li><a href="#">id-1</a></li>
-            <li><a href="#">id-2</a></li>
-            <li><a href="#">id-3</a></li>
-            <li><a href="#">id-4</a></li>
         </ul>
     </div>
     <script>
@@ -45,13 +41,12 @@
           });
         });
         peer.on('connection', function(conn) {
-          alert('Connection is open');
-          conn.on('open', function() {
-            conn.on('data', function(data) {
-              alert('Received' + data);
-            });
+          $("#connected_peers_list").prepend('<li id=' + conn.peer + '><a href="#">' + conn.peer + '</a></li>');
+          conn.on('close', function() {
+            $('#' + conn.peer).remove();
           });
         });
+        peer.on()
       }
 
       window.onload = createPeer;
