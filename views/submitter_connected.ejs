@@ -10,12 +10,25 @@
   <body>
     <h1>Task Status</h1>
     <hr>
-    <form action="/action_page.php">
+    <form>
       <label for="peer_id">Your Peer Id</label>
       <input type="text" id="peer_id" name="peer_id" value="sample-id" readonly>
 
       <label for="task_title">Task Title</label>
       <input type="text" id="task_title" value="<%= task_title %>" name="task_title" readonly>
+
+      <label for="batch_size">Batch Size</label>
+      <input type="text" id="batch_size" name="batch_size">
+
+      <label for="input_data">Input Data
+        <div class="tooltip">(Format)
+          <span class="tooltiptext">{ <pre>"Input": [/*Your array of input JSONs*/]</pre>}</span>
+        </div>
+      </label>
+      <textarea id="input_data" name="input_data" placeholder="" style="height:200px"></textarea>
+
+      <label for="task_title">Output Data from peers</label>
+      <textarea id="output_data" name="output_data" placeholder="" style="height:200px"  readonly></textarea>
     </form>
     <div>
       <label for="connected_peers_list">Connected Peers</label>
@@ -23,6 +36,24 @@
         </ul>
     </div>
     <script>
+      function getInputData() {
+        if(typeof getInputData.counter == 'undefined') {
+          getInputData.counter = 0;
+          getInputData.inputArray = JSON.parse($("#input_data").val()).Input;
+          getInputData.batchSize = parseInt($("#batch_size").val());
+        }
+        let res = {};
+        if(getInputData.counter < getInputData.inputArray.length) {
+          res = {
+            Input: getInputData.inputArray.slice(getInputData.counter, getInputData.counter + getInputData.batchSize)
+            };
+          getInputData.counter = getInputData.counter + getInputData.batchSize;
+        }
+        else {
+          alert('Input data exhausted. You may use the output now!');
+        }
+        return JSON.stringify(res);
+      }
       function guid() {
         function s4() {
           return Math.floor((1 + Math.random()) * 0x10000)
@@ -37,11 +68,25 @@
         var peerIdText = document.getElementById("peer_id");
         peer.on('open', function () {
           peerIdText.value = peer.id;
-          $.post('/update_submitters_list', {id: peer.id, task_title: '<%= task_title %>'}, function(data) {
-          });
+          $.post('/update_submitters_list', {id: peer.id, task_title: '<%= task_title %>',
+            js_function: '<%= js_function %>'},
+            function(data) {
+            }
+          );
         });
         peer.on('connection', function(conn) {
           $("#connected_peers_list").prepend('<li id=' + conn.peer + '><a href="#">' + conn.peer + '</a></li>');
+          conn.on('open', function() {
+            conn.on('data', function(data) {
+              if(data == 'ready') {
+                conn.send(getInputData());
+              }
+              else {
+                let curVal = $("#output_data").val();
+                $("#output_data").val(curVal + "\n" + data);
+              }
+            });
+          });
           conn.on('close', function() {
             $('#' + conn.peer).remove();
           });

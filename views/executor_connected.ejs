@@ -21,6 +21,11 @@
       <input type="text" id="task_title" value="<%= task_title %>" name="task_title" readonly>
     </form>
     <script>
+      function executorFunction(input) {
+        console.log(input);
+        input = JSON.parse(input);
+        <%= js_function %>
+      }
       function guid() {
         function s4() {
           return Math.floor((1 + Math.random()) * 0x10000)
@@ -36,13 +41,20 @@
         peer.on('open', function () {
           peerIdText.value = peer.id;
         });
+        peer.on('error', function (err) {
+          alert('' + err)
+        });
 
         var conn = peer.connect('<%= id %>');
         conn.on('open', function() {
-          conn.send('Hello. I will execute : ' + peer.id);
-        });
-        peer.on('error', function (err) {
-          alert('' + err)
+          conn.send('ready');
+          conn.on('data', function(data) {
+            let result = executorFunction(data);
+            if(Object.keys(result).length > 0) {
+              conn.send(JSON.stringify(executorFunction(data)));
+              conn.send('ready');
+            }
+          });
         });
       }
 
