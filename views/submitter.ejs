@@ -11,7 +11,14 @@
         <label for="task_title">Task Title</label>
         <input type="text" id="task_title" name="task_title" placeholder="Enter a title for your task">
 
-        <label for="js_function">Javascript Function</label>
+        <label for="js_function">Javascript Function
+          <div class="tooltip">(?)
+            <span class="tooltiptext">Input Format : <br>{ <pre>"Input": [/*Your array of input JSONs*/]</pre>}<br>
+              Use "input.Input" to get the input array <br>
+              Return javascript object as an output
+            </span>
+          </div>
+        </label>
         <textarea id="js_function" name="js_function" placeholder="Enter javascript Function" style="height:200px"></textarea>
 
         <input type="submit" id="submit_btn" value="Submit">
