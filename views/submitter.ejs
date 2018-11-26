@@ -3,6 +3,7 @@
   <head>
     <title>Submit Task</title>
     <link rel='stylesheet' href='/stylesheets/submitter_style.css' />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
   </head>
   <body>
     <h1>Submit Task</h1>
@@ -11,7 +12,7 @@
         <label for="task_title">Task Title</label>
         <input type="text" id="task_title" name="task_title" placeholder="Enter a title for your task">
 
-        <label for="js_function">Javascript Function
+        <label for="js_function_prelim">Javascript Function
           <div class="tooltip">(?)
             <span class="tooltiptext">Input Format : <br>{ <pre>"Input": [/*Your array of input JSONs*/]</pre>}<br>
               Use "input.Input" to get the input array <br>
@@ -19,10 +20,38 @@
             </span>
           </div>
         </label>
-        <textarea id="js_function" name="js_function" placeholder="Enter javascript Function" style="height:200px"></textarea>
-
+        <textarea id="js_function_prelim" name="js_function_prelim" placeholder="Enter javascript Function" style="height:200px"></textarea>
+        <textarea id="js_function" name="js_function" style="display:none;"></textarea>
         <input type="submit" id="submit_btn" value="Submit">
       </form>
-		</div>
+      <!-- <button id="submit_btn" value="Submit">Submit</button> -->
+    </div>
+
+    <script>
+      function correct(inp) {
+        noBreaksText = inp;
+        noBreaksText = noBreaksText.replace(/(\r\n|\n|\r)/gm,"<1br />");
+
+        re1 = /<1br \/><1br \/>/gi;
+        re1a = /<1br \/><1br \/><1br \/>/gi;
+        noBreaksText = noBreaksText.replace(re1," ");
+        re2 = /\<1br \/>/gi;
+        noBreaksText = noBreaksText.replace(re2, " ");
+
+        re3 = /\s+/g;
+        noBreaksText = noBreaksText.replace(re3," ");
+
+        re4 = /<2br \/>/gi;
+        noBreaksText = noBreaksText.replace(re4,"\n\n");
+
+        return noBreaksText;
+      }
+      $(function(){
+        $('#js_function_prelim').keyup(function(){
+          $('#js_function').val(correct($(this).val()));
+        });
+      });
+    </script>
+
   </body>
 </html>

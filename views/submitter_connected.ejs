@@ -36,6 +36,8 @@
         </ul>
     </div>
     <script>
+      createPeer();
+      var batchesList = {};
       function getInputData() {
         if(typeof getInputData.counter == 'undefined') {
           getInputData.counter = 0;
@@ -69,13 +71,14 @@
         peer.on('open', function () {
           peerIdText.value = peer.id;
           $.post('/update_submitters_list', {id: peer.id, task_title: '<%= task_title %>',
-            js_function: '<%= js_function %>'},
+            js_function: '<%- js_function %>'},
             function(data) {
             }
           );
         });
         peer.on('connection', function(conn) {
-          $("#connected_peers_list").prepend('<li id=' + conn.peer + '><a href="#">' + conn.peer + '</a></li>');
+          batchesList[conn.peer] = 0;
+          $("#connected_peers_list").prepend('<li id=' + conn.peer + '><a href="#">' + conn.peer + '....Batches = ' + batchesList[conn.peer] + '</a></li>');
           conn.on('open', function() {
             conn.on('data', function(data) {
               if(data == 'ready') {
@@ -84,6 +87,8 @@
               else {
                 let curVal = $("#output_data").val();
                 $("#output_data").val(curVal + "\n" + data);
+                batchesList[conn.peer]++;
+                $("#" + conn.peer).html('<a href="#">' + conn.peer + '....Batches = ' + batchesList[conn.peer] + '</a>');
               }
             });
           });
@@ -94,7 +99,7 @@
         peer.on()
       }
 
-      window.onload = createPeer;
+      // $(window).load(createPeer);
     </script>
   </body>
 </html>
