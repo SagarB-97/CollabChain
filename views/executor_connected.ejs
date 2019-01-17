@@ -28,14 +28,14 @@
       function guid() {
         function s4() {
           return Math.floor((1 + Math.random()) * 0x10000)
-            .toString(16)
+            .toString(10)
             .substring(1);
         }
-        return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+        return s4() + s4() + s4() + '';
       }
 
       function createPeer() {
-        var peer = new Peer(guid(), {host: 'localhost', port: 9000, path: '/'});
+        var peer = new Peer(guid(), {host: '<%= ip %>', port: 9000, path: '/'});
         var peerIdText = document.getElementById("peer_id");
         peer.on('open', function () {
           peerIdText.value = peer.id;

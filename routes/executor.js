@@ -23,7 +23,9 @@ router.get('/:peerid', function(req, res, next) {
   createNewFileIfAbsent();
   let id = req.params.peerid;
   let obj = JSON.parse(fs.readFileSync(peerListFilePath))[id];
-  res.render('executor_connected', {id: obj.id, task_title: obj.task_title, js_function: obj.js_function});
+  var ip = require('ip').address();
+  console.log(ip);
+  res.render('executor_connected', {id: obj.id, task_title: obj.task_title, js_function: obj.js_function, ip: ip});
 });
 
 module.exports = router;
