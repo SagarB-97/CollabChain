@@ -45,14 +45,15 @@
         </ul>
     </div>
     <script>
+
       if (typeof web3 !== 'undefined') {
             web3 = new Web3(web3.currentProvider);
         } else {
-            // set the provider you want from Web3.providers
             web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
         }
 
-        web3.eth.defaultAccount = web3.eth.accounts[0];
+      web3.eth.defaultAccount = web3.eth.accounts[1];
+
       var ABI = {
   "contractName": "Verify",
   "abi": [
@@ -4081,6 +4082,8 @@
     "methods": {}
   }
 }
+      var VerifyContract = web3.eth.contract(ABI.abi);
+      var Verify = VerifyContract.at('0x1F2152eFecCCA7819A642793bB4E052E3d684cF1');
 
       function hashCode(str) {
         var hash = 0;
@@ -4113,13 +4116,10 @@
         /*
         console.log(indices);
         console.log(expectedOutputs);
-        Send to smart contract here
         */
-
-        web3.personal.unlockAccount(web3.eth.defaultAccount);
-        var VerifyContract = web3.eth.contract(ABI.abi);
-        var Verify = VerifyContract.at('0x16D22A84a029b31497662F3Cdb8c6e7F641C80dA');
-        Verify.add_process(p_id, expectedOutputs.length, indices, expectedOutputs, parseInt(price), {from:web3.eth.accounts[1], value:web3.toWei(price, 'ether')});
+        web3.personal.unlockAccount(web3.eth.defaultAccount, (error,result) => (console.log(result)));
+        
+        Verify.add_process(p_id, expectedOutputs.length, indices, expectedOutputs, parseInt(price), {from:web3.eth.accounts[1], value:web3.toWei(price, 'ether')}, (error, result) => (console.log(result)));
       }
 
       function executorFunction(input) {

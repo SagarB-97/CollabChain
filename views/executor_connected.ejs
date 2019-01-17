@@ -25,11 +25,10 @@
       if (typeof web3 !== 'undefined') {
             web3 = new Web3(web3.currentProvider);
         } else {
-            // set the provider you want from Web3.providers
             web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7546"));
         }
 
-      web3.eth.defaultAccount = web3.eth.accounts[0];
+      web3.eth.defaultAccount = web3.eth.accounts[3];
 
       var ABI = {
   "contractName": "Verify",
@@ -4059,9 +4058,8 @@
     "methods": {}
   }
 }
-
-      var VerifyContract = web3.eth.contract(ABI);
-      var Verify = VerifyContract.at('0xbafD9812e72C165448ab85A485e9357d979005De');
+      var VerifyContract = web3.eth.contract(ABI.abi);
+      var Verify = VerifyContract.at('0x1F2152eFecCCA7819A642793bB4E052E3d684cF1');
 
       String.prototype.hashCode = function () {
         var hash = 0;
@@ -4126,17 +4124,16 @@
                 hashedResultArray.push(resultArray[i].hashCode());
               }
               /*
-              Send these to smart contract
               console.log(indexArray);
               console.log(hashedResultArray);
               */
               
-              // Call contract with hashedResultArray and indexArray
-
-              var balance = web3.eth.getBalance(web3.eth.defaultAccount);
-              Verify.verify_output(parseInt('<%= id %>'), hashedResultArray.length, indexArray, hashedResultArray);
+              web3.personal.unlockAccount(web3.eth.defaultAccount, (error,result) => (console.log(result)));
+              
+              var balance = web3.eth.getBalance(web3.eth.defaultAccount, (error, result) => (console.log(result)));
+              Verify.verify_output(parseInt('<%= id %>'), hashedResultArray.length, indexArray, hashedResultArray, {from:web3.eth.defaultAccount}, (error, result) => (console.log(result)));
               var watchBalance = setInterval(function(){
-                var new_balance = web3.eth.getBalance(web3.eth.defaultAccount);
+                var new_balance = web3.eth.getBalance(web3.eth.defaultAccount, (error, result) => (console.log(result)));
                 if(new_balance > balance) {
                   let toSend = {result: resultArray, offset: offset};
                   conn.send(JSON.stringify(toSend));
@@ -4144,7 +4141,6 @@
                   clearInterval(watchBalance);
                 }
               }, 5000);
-              // Monitor wallet balance before sending the result back
             }
           });
         });
