@@ -77,3 +77,6 @@ typings/
 
 # File created by server
 peerList.json
+
+# Truffle and Solidity files
+smart_contracts/build/
