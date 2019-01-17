@@ -64,7 +64,7 @@ The platform can be used to distribute tasks that require enormous number of CPU
 
 This is the function that each executor executes in parallel. The submitter divides the entire input into smaller arrays of `Batch Size` each and each executor is sent its share of input. <br>
 
-**Assumption** : Assume the variable `input.Input` contains the array that the executor receives. The first line in the function can be, for example, `arr = input.Input`. From there `arr` can be used.
+**Assumption** : Assume the variable `input` contains the json object that the executor receives.
 
 The plaform takes care of : <br>
 1. Scaling up as the number of executors connected increases. That is, the throughput is proportional to the number of connected executors.
@@ -77,19 +77,16 @@ An example problem that the platform can be used to solve is **Factorisation of 
 The javascript function for this problem is :
 
 ```javascript
-arr = input.Input;
+obj = input;
+factor = [];
 outArr = [];
-for(var i = 0; i < arr.length; i++) {
-	obj = arr[i];
-	factor = [];
-	for(var k = obj.start; k <= obj.end && k * k <= obj.num; k++) {
-		if(obj.num % k == 0) {
-			factor.push(k);
-			factor.push(obj.num / k);
-		}
+for(var k = obj.start; k <= obj.end && k * k <= obj.num; k++) {
+	if(obj.num % k == 0) {
+		factor.push(k);
+		factor.push(obj.num / k);
 	}
-	outArr.push({Factor: factor});
 }
+outArr.push({Factor: factor});
 return {output: outArr};
 ```
 
@@ -119,4 +116,4 @@ The input to find factors of `123456789123456800000` can be :
 }
 ```
 
-The entire input and a script to generate the input is provided in the examples folder.
+The entire input and a script to generate the input is provided in the `Examples` folder.

@@ -21,10 +21,25 @@
       <input type="text" id="task_title" value="<%= task_title %>" name="task_title" readonly>
     </form>
     <script>
+
+      String.prototype.hashCode = function () {
+        var hash = 0;
+        if (this.length == 0) {
+          return hash;
+        }
+        for (var i = 0; i < this.length; i++) {
+          var char = this.charCodeAt(i);
+          hash = ((hash << 5) - hash) + char;
+          hash = hash & hash; // Convert to 32bit integer
+        }
+        return hash;
+      }
+
       function executorFunction(input) {
         input = JSON.parse(input);
         <%- js_function %>
       }
+
       function guid() {
         function s4() {
           return Math.floor((1 + Math.random()) * 0x10000)
@@ -48,9 +63,37 @@
         conn.on('open', function() {
           conn.send('ready');
           conn.on('data', function(data) {
-            let result = executorFunction(data);
-            if(Object.keys(result).length > 0) {
-              conn.send(JSON.stringify(executorFunction(data)));
+            // Incoming JSON has the 'offset' and the 'MainInput'
+            let incomingJSON = JSON.parse(data);
+            let inputData = incomingJSON.MainInput;
+            let offset = incomingJSON.offset;
+            inputData = JSON.parse(inputData);
+            inputData = inputData.Input;
+            let indexArray = [];
+            let resultArray = [];
+            for(let i = 0; i < inputData.length; i++) {
+              indexArray.push(i + offset);
+              //reult of the current batch
+              let result = executorFunction(JSON.stringify(inputData[i]));
+              result = JSON.stringify(result);
+              resultArray.push(result);
+            }
+
+            if(resultArray.length > 0) {
+              hashedResultArray = [];
+              for(let i = 0; i < resultArray.length; i++) {
+                hashedResultArray.push(resultArray[i].hashCode());
+              }
+              /*
+              Send these to smart contract
+              console.log(indexArray);
+              console.log(hashedResultArray);
+              */
+              // Call contract with hashedResultArray and indexArray
+              // Monitor wallet balance before sending the result back
+
+              let toSend = {result: resultArray, offset: offset};
+              conn.send(JSON.stringify(toSend));
               conn.send('ready');
             }
           });

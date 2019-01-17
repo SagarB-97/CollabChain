@@ -22,7 +22,7 @@
 
       <label for="input_data">Input Data
         <div class="tooltip">(Format)
-          <span class="tooltiptext">{ <pre>"Input": [/*Your array of input JSONs*/]</pre>}</span>
+          <span class="tooltiptext">{ <pre>{ /* Your JSON Object named 'input' */ }</pre>}</span>
         </div>
       </label>
       <textarea id="input_data" name="input_data" placeholder="" style="height:200px"></textarea>
@@ -30,26 +30,68 @@
       <label for="task_title">Output Data from peers</label>
       <textarea id="output_data" name="output_data" placeholder="" style="height:200px"  readonly></textarea>
     </form>
-    <div>
+
+    <button type="button" onclick="init()">Create Peer and Pay</button>
+    <div style="padding-top:50px;">
       <label for="connected_peers_list">Connected Peers</label>
         <ul id="connected_peers_list">
         </ul>
     </div>
     <script>
-      createPeer();
+
+      String.prototype.hashCode = function () {
+        var hash = 0;
+        if (this.length == 0) {
+          return hash;
+        }
+        for (var i = 0; i < this.length; i++) {
+          var char = this.charCodeAt(i);
+          hash = ((hash << 5) - hash) + char;
+          hash = hash & hash; // Convert to 32bit integer
+        }
+        return hash;
+      }
+
+      function init() {
+        createPeer();
+        let batchSize = parseInt($("#batch_size").val());
+        let indices = [];
+        let expectedOutputs = [];
+        inputArray = JSON.parse($("#input_data").val()).Input;
+        for(let i = 0; i < inputArray.length; i += batchSize) {
+          indices.push(i);
+          //reult of the current batch
+          let result = executorFunction(JSON.stringify(inputArray[i]));
+          result = JSON.stringify(result);
+          expectedOutputs.push(result.hashCode());
+        }
+        /*
+        console.log(indices);
+        console.log(expectedOutputs);
+        Send to smart contract here
+        */
+      }
+
+      function executorFunction(input) {
+        input = JSON.parse(input);
+        <%- js_function %>
+      }
+
+
       var batchesList = {};
+      var globalCounter = 0;
+
       function getInputData() {
-        if(typeof getInputData.counter == 'undefined') {
-          getInputData.counter = 0;
+        if(typeof getInputData.inputArray == 'undefined') {
           getInputData.inputArray = JSON.parse($("#input_data").val()).Input;
           getInputData.batchSize = parseInt($("#batch_size").val());
         }
         let res = {};
-        if(getInputData.counter < getInputData.inputArray.length) {
+        if(globalCounter < getInputData.inputArray.length) {
           res = {
-            Input: getInputData.inputArray.slice(getInputData.counter, getInputData.counter + getInputData.batchSize)
+            Input: getInputData.inputArray.slice(globalCounter, globalCounter + getInputData.batchSize)
             };
-          getInputData.counter = getInputData.counter + getInputData.batchSize;
+          globalCounter = globalCounter + getInputData.batchSize;
         }
         else {
           alert('Input data exhausted. You may use the output now!');
@@ -82,7 +124,9 @@
           conn.on('open', function() {
             conn.on('data', function(data) {
               if(data == 'ready') {
-                conn.send(getInputData());
+                let batchSize = parseInt($("#batch_size").val());
+                let toSendJSON = {MainInput: getInputData(), offset: globalCounter - batchSize};
+                conn.send(JSON.stringify(toSendJSON));
               }
               else {
                 let curVal = $("#output_data").val();
