@@ -45,16 +45,14 @@
         </ul>
     </div>
     <script>
-
-            if (typeof web3 !== 'undefined') {
+      if (typeof web3 !== 'undefined') {
             web3 = new Web3(web3.currentProvider);
         } else {
             // set the provider you want from Web3.providers
             web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
         }
 
-      web3.eth.defaultAccount = web3.eth.accounts[0];
-
+        web3.eth.defaultAccount = web3.eth.accounts[0];
       var ABI = {
   "contractName": "Verify",
   "abi": [
@@ -4084,16 +4082,13 @@
   }
 }
 
-      var VerifyContract = web3.eth.contract(ABI);
-      var Verify = VerifyContract.at('0xbafD9812e72C165448ab85A485e9357d979005De');
-
-      String.prototype.hashCode = function () {
+      function hashCode(str) {
         var hash = 0;
-        if (this.length == 0) {
+        if (str.length == 0) {
           return hash;
         }
-        for (var i = 0; i < this.length; i++) {
-          var char = this.charCodeAt(i);
+        for (var i = 0; i < str.length; i++) {
+          var char = str.charCodeAt(i);
           hash = ((hash << 5) - hash) + char;
           hash = hash & hash; // Convert to 32bit integer
         }
@@ -4113,15 +4108,18 @@
           //reult of the current batch
           let result = executorFunction(JSON.stringify(inputArray[i]));
           result = JSON.stringify(result);
-          expectedOutputs.push(result.hashCode());
+          expectedOutputs.push(hashCode(result));
         }
         /*
         console.log(indices);
         console.log(expectedOutputs);
         Send to smart contract here
         */
-        
-        Verify.add_process(p_id, expectedOutputs.length, indices, expectedOutputs, parseInt(price), {from:web.eth.accounts[1], value:web3.toWei(price, 'ether')});
+
+        web3.personal.unlockAccount(web3.eth.defaultAccount);
+        var VerifyContract = web3.eth.contract(ABI.abi);
+        var Verify = VerifyContract.at('0x16D22A84a029b31497662F3Cdb8c6e7F641C80dA');
+        Verify.add_process(p_id, expectedOutputs.length, indices, expectedOutputs, parseInt(price), {from:web3.eth.accounts[1], value:web3.toWei(price, 'ether')});
       }
 
       function executorFunction(input) {
@@ -4196,6 +4194,7 @@
       }
 
       // $(window).load(createPeer);
+      // window.ethereum.enable();
     </script>
   </body>
 </html>
