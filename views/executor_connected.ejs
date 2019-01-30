@@ -4130,8 +4130,33 @@
               
               web3.personal.unlockAccount(web3.eth.defaultAccount, (error,result) => (console.log(result)));
               
-              var balance = web3.eth.getBalance(web3.eth.defaultAccount, (error, result) => (console.log(result)));
+              //var balance = web3.eth.getBalance(web3.eth.defaultAccount, (error, result) => (console.log(result)));
               Verify.verify_output(parseInt('<%= id %>'), hashedResultArray.length, indexArray, hashedResultArray, {from:web3.eth.defaultAccount}, (error, result) => (console.log(result)));
+              
+              /*Verify.events.verified.watch(function(error, result){
+                if(!error) {
+                  if(result.args._from == web3.eth.defaultAccount && result.args.success == "true") {
+                    let toSend = {result: resultArray, offset: offset};
+                    conn.send(JSON.stringify(toSend));
+                    conn.send('ready');
+                  }
+                }
+              });*/
+
+              Verify.events.verified({
+                filter: { _from: web3.eth.defaultAccount, success: "true"}
+              }, function(error, result){
+                  //if(!error) {
+                  //  if(result.args._from == web3.eth.defaultAccount && result.args.success == "true") {
+                      let toSend = {result: resultArray, offset: offset};
+                      conn.send(JSON.stringify(toSend));
+                      conn.send('ready');
+                  //  }
+                  // }
+                }
+              ); //To Test
+              
+              /*
               var watchBalance = setInterval(function(){
                 var new_balance = web3.eth.getBalance(web3.eth.defaultAccount, (error, result) => (console.log(result)));
                 if(new_balance > balance) {
@@ -4141,6 +4166,7 @@
                   clearInterval(watchBalance);
                 }
               }, 5000);
+              */
             }
           });
         });

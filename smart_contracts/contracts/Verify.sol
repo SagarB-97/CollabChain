@@ -12,7 +12,7 @@ contract Verify {
 
 	mapping(uint => process) processes;
 
-	event verified(address _from, bool success);
+	event verified(address indexed _from, bool indexed success);
 
 	function add_process(uint _p_id, uint _n, uint[] memory _indices, 
                         uint[] memory _noutputs, uint _price) public payable returns (bool success) {
