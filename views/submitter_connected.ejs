@@ -32,6 +32,9 @@
     </form>
 
     <button type="button" onclick="init()">Create Peer and Pay</button>
+    <div id="batches_completed" style="padding-top:50px;">
+      Batches Completed :
+    </div>
     <div style="padding-top:50px;">
       <label for="connected_peers_list">Connected Peers</label>
         <ul id="connected_peers_list">
@@ -39,6 +42,8 @@
     </div>
     <script>
 
+      var batches_completed = 0;
+      var total_bacthes = 0;
       String.prototype.hashCode = function () {
         var hash = 0;
         if (this.length == 0) {
@@ -58,6 +63,12 @@
         let indices = [];
         let expectedOutputs = [];
         inputArray = JSON.parse($("#input_data").val()).Input;
+        if(inputArray.length % batchSize == 0) {
+          total_bacthes = inputArray.length / batchSize;
+        }
+        else {
+          total_bacthes = inputArray.length / batchSize + 1;
+        }
         for(let i = 0; i < inputArray.length; i += batchSize) {
           indices.push(i);
           //reult of the current batch
@@ -65,6 +76,7 @@
           result = JSON.stringify(result);
           expectedOutputs.push(result.hashCode());
         }
+        $("#batches_completed").html("Batches Completed: " + batches_completed + " / " + total_bacthes);
         /*
         console.log(indices);
         console.log(expectedOutputs);
@@ -80,21 +92,21 @@
 
       var batchesList = {};
       var globalCounter = 0;
+      var startTime = 0;
+      var endTime = 0;
+      var alertShown = 0;
 
       function getInputData() {
         if(typeof getInputData.inputArray == 'undefined') {
           getInputData.inputArray = JSON.parse($("#input_data").val()).Input;
           getInputData.batchSize = parseInt($("#batch_size").val());
         }
-        let res = {};
+        let res = {Input: []};
         if(globalCounter < getInputData.inputArray.length) {
           res = {
             Input: getInputData.inputArray.slice(globalCounter, globalCounter + getInputData.batchSize)
             };
           globalCounter = globalCounter + getInputData.batchSize;
-        }
-        else {
-          alert('Input data exhausted. You may use the output now!');
         }
         return JSON.stringify(res);
       }
@@ -119,6 +131,9 @@
           );
         });
         peer.on('connection', function(conn) {
+          if(Object.keys(batchesList).length == 0) {
+            startTime = new Date().getTime();
+          }
           batchesList[conn.peer] = 0;
           $("#connected_peers_list").prepend('<li id=' + conn.peer + '><a href="#">' + conn.peer + '....Batches = ' + batchesList[conn.peer] + '</a></li>');
           conn.on('open', function() {
@@ -132,7 +147,13 @@
                 let curVal = $("#output_data").val();
                 $("#output_data").val(curVal + "\n" + data);
                 batchesList[conn.peer]++;
+                batches_completed++;
                 $("#" + conn.peer).html('<a href="#">' + conn.peer + '....Batches = ' + batchesList[conn.peer] + '</a>');
+                $("#batches_completed").html("Batches Completed: " + batches_completed + " / " + total_bacthes);
+                if (batches_completed == total_bacthes) {
+                  var elapsed = new Date().getTime() - startTime;
+                  alert('All output obtained. Time = ' + elapsed + ' ms');
+                }
               }
             });
           });
