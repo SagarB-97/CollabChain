@@ -6763,7 +6763,7 @@
         }
       }
       var VerifyContract = web3.eth.contract(ABI.abi);
-      var Verify = VerifyContract.at('0x0b082405A153938b1B914C6F95A43E3f36C5F6C1');
+      var Verify = VerifyContract.at('0x28e947184ba407d58Cb92c5b59Fd92C7de9F9d5A');
 
       function hashCode(str) {
         var hash = 0;
@@ -6816,7 +6816,7 @@
           getInputData.inputArray = JSON.parse($("#input_data").val()).Input;
           getInputData.batchSize = parseInt($("#batch_size").val());
         }
-        let res = {};
+        let res = {Input: []};
         if(globalCounter < getInputData.inputArray.length) {
           res = {
             Input: getInputData.inputArray.slice(globalCounter, globalCounter + getInputData.batchSize)
@@ -6834,7 +6834,7 @@
             .toString(10)
             .substring(1);
         }
-        return s4() + s4() + s4() + '';
+        return s4() + s4() + '';
       }
 
       function createPeer() {

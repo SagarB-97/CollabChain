@@ -28,7 +28,7 @@
             web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7546"));
         }
 
-      web3.eth.defaultAccount = web3.eth.accounts[3];
+      web3.eth.defaultAccount = web3.eth.accounts[0];
 
       var ABI = {
         "contractName": "Verify",
@@ -6740,7 +6740,7 @@
       }
       
       var VerifyContract = web3.eth.contract(ABI.abi);
-      var Verify = VerifyContract.at('0x0b082405A153938b1B914C6F95A43E3f36C5F6C1');
+      var Verify = VerifyContract.at('0x28e947184ba407d58Cb92c5b59Fd92C7de9F9d5A');
 
       String.prototype.hashCode = function () {
         var hash = 0;
@@ -6766,7 +6766,7 @@
             .toString(10)
             .substring(1);
         }
-        return s4() + s4() + s4() + '';
+        return s4() + s4() + '';
       }
 
       function createPeer() {
@@ -6812,6 +6812,9 @@
               web3.personal.unlockAccount(web3.eth.defaultAccount, (error,result) => (console.log(result)));
               
               //var balance = web3.eth.getBalance(web3.eth.defaultAccount, (error, result) => (console.log(result)));
+              console.log("Id = " + parseInt('<%= id %>'));
+              console.log(hashedResultArray);
+              console.log(indexArray);
               Verify.verify_output(parseInt('<%= id %>'), hashedResultArray.length, indexArray, hashedResultArray, {from:web3.eth.defaultAccount, gas:4698712}, (error, result) => (console.log(result)));
               
               /*Verify.events.verified.watch(function(error, result){
