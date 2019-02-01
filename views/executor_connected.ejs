@@ -6740,7 +6740,7 @@
       }
       
       var VerifyContract = web3.eth.contract(ABI.abi);
-      var Verify = VerifyContract.at('0x1F2152eFecCCA7819A642793bB4E052E3d684cF1');
+      var Verify = VerifyContract.at('0x0b082405A153938b1B914C6F95A43E3f36C5F6C1');
 
       String.prototype.hashCode = function () {
         var hash = 0;
@@ -6812,7 +6812,7 @@
               web3.personal.unlockAccount(web3.eth.defaultAccount, (error,result) => (console.log(result)));
               
               //var balance = web3.eth.getBalance(web3.eth.defaultAccount, (error, result) => (console.log(result)));
-              Verify.verify_output(parseInt('<%= id %>'), hashedResultArray.length, indexArray, hashedResultArray, {from:web3.eth.defaultAccount}, (error, result) => (console.log(result)));
+              Verify.verify_output(parseInt('<%= id %>'), hashedResultArray.length, indexArray, hashedResultArray, {from:web3.eth.defaultAccount, gas:4698712}, (error, result) => (console.log(result)));
               
               /*Verify.events.verified.watch(function(error, result){
                 if(!error) {
@@ -6824,11 +6824,12 @@
                 }
               });*/
 
-              Verify.events.verified({
+              Verify.verified({
                 filter: { _from: web3.eth.defaultAccount, success: "true"}
-              }, function(error, result){
+              }, function(error, r){
                   //if(!error) {
                   //  if(result.args._from == web3.eth.defaultAccount && result.args.success == "true") {
+                      console.log('Inside event watcher');
                       let toSend = {result: resultArray, offset: offset};
                       conn.send(JSON.stringify(toSend));
                       conn.send('ready');
@@ -6854,6 +6855,7 @@
       }
 
       window.onload = createPeer;
+      window.ethereum.enable();
     </script>
   </body>
 </html>

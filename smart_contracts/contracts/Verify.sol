@@ -43,7 +43,8 @@ contract Verify {
 					break;
 			}
 		}
-		msg.sender.transfer((p.price / p.n) * 1 ether);
+		uint toSend = p.price / p.n;
+		msg.sender.transfer(toSend * 1 ether);
 		emit verified(msg.sender, true);
 		return "true";
 	}

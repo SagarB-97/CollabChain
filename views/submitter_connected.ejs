@@ -49,7 +49,7 @@
       if (typeof web3 !== 'undefined') {
             web3 = new Web3(web3.currentProvider);
         } else {
-            web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+            web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7546"));
         }
 
       web3.eth.defaultAccount = web3.eth.accounts[1];
@@ -6763,7 +6763,7 @@
         }
       }
       var VerifyContract = web3.eth.contract(ABI.abi);
-      var Verify = VerifyContract.at('0x1F2152eFecCCA7819A642793bB4E052E3d684cF1');
+      var Verify = VerifyContract.at('0x0b082405A153938b1B914C6F95A43E3f36C5F6C1');
 
       function hashCode(str) {
         var hash = 0;
@@ -6799,7 +6799,7 @@
         */
         web3.personal.unlockAccount(web3.eth.defaultAccount, (error,result) => (console.log(result)));
         
-        Verify.add_process(p_id, expectedOutputs.length, indices, expectedOutputs, parseInt(price), {from:web3.eth.accounts[1], value:web3.toWei(price, 'ether')}, (error, result) => (console.log(result)));
+        Verify.add_process(p_id, expectedOutputs.length, indices, expectedOutputs, parseInt(price), {from:web3.eth.defaultAccount, value:web3.toWei(price, 'ether')}, (error, result) => (console.log(result)));
       }
 
       function executorFunction(input) {
@@ -6874,7 +6874,7 @@
       }
 
       // $(window).load(createPeer);
-      // window.ethereum.enable();
+      window.ethereum.enable();
     </script>
   </body>
 </html>
