@@ -6812,10 +6812,8 @@
               web3.personal.unlockAccount(web3.eth.defaultAccount, (error,result) => (console.log(result)));
               
               //var balance = web3.eth.getBalance(web3.eth.defaultAccount, (error, result) => (console.log(result)));
-              console.log("Id = " + parseInt('<%= id %>'));
-              console.log(hashedResultArray);
-              console.log(indexArray);
-              Verify.verify_output(parseInt('<%= id %>'), hashedResultArray.length, indexArray, hashedResultArray, {from:web3.eth.defaultAccount, gas:4698712}, (error, result) => (console.log(result)));
+              // var pID = parseInt('<%= id %>');
+              var pID = 10;
               
               /*Verify.events.verified.watch(function(error, result){
                 if(!error) {
@@ -6827,22 +6825,40 @@
                 }
               });*/
 
+              // var verified = Verify.verified({ '_from': web3.eth.defaultAccount, 'success': "true"}, {fromBlock: 0, toBlock: 'latest'});
+              // verified.watch(function(error, r){
+              //     if(!error) {
+              //       console.log(r);
+              //     //  if(result.args._from == web3.eth.defaultAccount && result.args.success == "true") {
+              //       console.log('Inside event watcher');
+              //       let toSend = {result: resultArray, offset: offset};
+              //       conn.send(JSON.stringify(toSend));
+              //         conn.send('ready');
+              //         verified.stopWatching();
+              //     //  }
+              //     }
+              //   });
+              var prevOffset = -1;
               Verify.verified({
-                filter: { _from: web3.eth.defaultAccount, success: "true"}
+                filter: { _from: web3.eth.defaultAccount, success: "true"},
+                fromBlock: 'latest'
               }, function(error, r){
-                  //if(!error) {
-                  //  if(result.args._from == web3.eth.defaultAccount && result.args.success == "true") {
-                      console.log('Inside event watcher');
-                      let toSend = {result: resultArray, offset: offset};
-                      conn.send(JSON.stringify(toSend));
-                      conn.send('ready');
+                if(!error && prevOffset != offset) {
+                  //  if(r.args._from == web3.eth.defaultAccount && r.args.success == true) {
+                    console.log('Inside event watcher');
+                    let toSend = {result: resultArray, offset: offset};
+                    prevOffset = offset;
+                    conn.send(JSON.stringify(toSend));
+                    conn.send('ready');
+                      // verified.stopWatching();
                   //  }
-                  // }
+                  }
                 }
-              ); //To Test
+                ); //To Test
+                Verify.verify_output(pID, hashedResultArray.length, indexArray, hashedResultArray, {from:web3.eth.defaultAccount, gas:4698712}, (error, result) => (console.log("Called verify_output function")));
               
-              /*
-              var watchBalance = setInterval(function(){
+                /*
+                var watchBalance = setInterval(function(){
                 var new_balance = web3.eth.getBalance(web3.eth.defaultAccount, (error, result) => (console.log(result)));
                 if(new_balance > balance) {
                   let toSend = {result: resultArray, offset: offset};
