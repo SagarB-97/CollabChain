@@ -117,3 +117,22 @@ The input to find factors of `123456789123456800000` can be :
 ```
 
 The entire input and a script to generate the input is provided in the `Examples` folder.
+
+## Instructions for Setting Up A Local Blockchain Test Network
+
+An Ethereum Blockchain has been used for the verification and incentivization. A test Blockchain can be created using [Ganache](https://truffleframework.com/ganache). The [Truffle](https://truffleframework.com/) framework is used to compile and deploy the smart contract to the Blockchain.
+
+Run Ganache (CLI or GUI)
+Then, edit the host and port values in `smart_contracts/truffle-config.js` to point to where the Ganache Blockchain is running.
+```bash
+cd smart_contracts
+vim truffle-config.js
+```
+Then compile the smart contract and deploy it to the Blockchain
+```bash
+truffle compile --reset --all
+truffle migrate --reset --all
+```
+`truffle migrate` will return the address of the deployed smart contract. Replace the address in the line `VerifyContract.at(address)` with this address in the `executor_connected.ejs` and the `submitter_connected.ejs` files. A quick `ctrl+f` should do the trick.
+This should be done every time the contract code is modified.
+
