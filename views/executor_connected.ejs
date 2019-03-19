@@ -14,6 +14,9 @@
       <label for="peer_id">Your Peer Id</label>
       <input type="text" id="peer_id" name="peer_id" value="sample-id" readonly>
 
+      <label for="trust_points">Your Trust Points</label>
+      <input type="text" id="trust_points" name="trust_points" value="5" readonly>
+
       <label for="sub_peer_id">Submitter Peer Id</label>
       <input type="text" id="sub_peer_id" name="sub_peer_id" value="<%= id %>" readonly>
 
@@ -21,7 +24,7 @@
       <input type="text" id="task_title" value="<%= task_title %>" name="task_title" readonly>
     </form>
     <script>
-
+      var trust_points = 5;
       String.prototype.hashCode = function () {
         var hash = 0;
         if (this.length == 0) {
@@ -94,6 +97,8 @@
 
               let toSend = {result: resultArray, offset: offset};
               conn.send(JSON.stringify(toSend));
+              trust_points = trust_points + 1;
+              $('#trust_points').val(trust_points);
               conn.send('ready');
             }
           });
